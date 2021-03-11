@@ -1,0 +1,4 @@
+require 'huginn_agent'
+
+#HuginnAgent.load 'huginn_twilio_get_media_urls_agent/concerns/my_agent_concern'
+HuginnAgent.register 'huginn_twilio_get_media_urls_agent/twilio_get_media_urls_agent'
