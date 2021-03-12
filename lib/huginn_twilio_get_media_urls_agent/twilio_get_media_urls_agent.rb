@@ -22,6 +22,10 @@ module Agents
       end
     end
 
+    def working?
+      true
+    end
+
 #    def check
 #    end
 
