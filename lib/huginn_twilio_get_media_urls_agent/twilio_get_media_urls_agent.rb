@@ -1,7 +1,10 @@
+require 'json'
+
 module Agents
   class TwilioGetMediaUrlsAgent < Agent
     cannot_be_scheduled!
     no_bulk_receive!
+    can_dry_run!
 
     description <<-MD
       This agent takes the output of a conversation onMessageEvent and looks for a 'Media' Key.  If it doesn't find one it passes the event on to the next agent.  If it does find one it performs web API calls to Twilio to convert the Sid's into temporary direct access URLs, which it places into a 'temp_links' key it adds to the original event.
@@ -32,7 +35,8 @@ module Agents
     def receive(incoming_events)
       interpolate_with_each(incoming_events) do |event|
         if event.payload['Media'].present?
-          links = event.payload['Media'].each_with_object([]) do |h, l|
+          media = JSON.parse(event.payload['Media'])
+          links = media.each_with_object([]) do |h, l|
             link = get_link(h['Sid'])
             l << link if link
           end
