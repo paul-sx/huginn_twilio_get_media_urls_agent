@@ -53,7 +53,7 @@ module Agents
     def client
       @client ||= Faraday.new(url: 'https://mcs.us1.twilio.com') do |builder|
         builder.request :retry
-        builder.request :basic_auth interpolated['account_sid'], interpolated['auth_token']
+        builder.request :basic_auth, interpolated['account_sid'], interpolated['auth_token']
         builder.adapter :net_http
       end
     end
