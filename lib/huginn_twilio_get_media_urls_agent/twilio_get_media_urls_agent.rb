@@ -4,7 +4,8 @@ module Agents
     no_bulk_receive!
 
     description <<-MD
-      Add a Agent description here
+      This agent takes the output of a conversation onMessageEvent and looks for a 'Media' Key.  If it doesn't find one it passes the event on to the next agent.  If it does find one it performs web API calls to Twilio to convert the Sid's into temporary direct access URLs, which it places into a 'temp_links' key it adds to the original event.
+      `chat_sid` is the Twilio chat service SID that is being used.
     MD
 
     def default_options
@@ -16,6 +17,9 @@ module Agents
     end
 
     def validate_options
+      unless options['account_sid'].present? && options['auth_token'].present? && options['chat_sid'].present?
+        errors.add(:base, "Account_sid, auth_token, and chat_sid all required.")
+      end
     end
 
 #    def check
@@ -28,7 +32,7 @@ module Agents
             link = get_link(h['Sid'])
             l << link if link
           end
-          event.payload['links'] = links
+          event.payload['temp_links'] = links
           create_event(payload: event.payload)
         else
           # Pass event untouched if Media is not present
